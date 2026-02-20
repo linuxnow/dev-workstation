@@ -37,7 +37,7 @@ RUN dnf install -y \
 
 # Base system tools (on top of toolbox)
 RUN dnf install -y \
-    curl jq tmux vim pinentry-tty \
+    curl jq tmux vim-enhanced pinentry-tty \
     && dnf clean all
 
 # Dev tools
