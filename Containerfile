@@ -101,6 +101,36 @@ RUN dnf install -y \
     ImageMagick \
     && dnf clean all
 
+# Kubernetes tooling — laptop-replacement role for the dev-workstation
+# pod on h2 (zerosignage/platform k8s/dev-workstation). Without these
+# the operator has to ssh to the h2 host + sudo k3s kubectl for every
+# cluster operation; with them, kubectl runs locally inside the pod
+# against ~/.kube/config (mounted from the home PVC).
+#
+# - kubectl: official Kubernetes CLI.
+# - helm:    pre-render charts before checkin per
+#            reference_k8s_pre_render_helm_pattern.md (cilium, velero,
+#            sops-secrets-operator etc.).
+#
+# Both come from pkgs.k8s.io — the official Kubernetes-project RPM
+# repo (signed releases, GPG-checked at install time via gpgcheck=1
+# + the published gpgkey URL).
+#
+# k9s (interactive cluster TUI) is intentionally NOT installed: it's
+# only available as an upstream tarball on github.com/derailed/k9s
+# releases, which is a curl-pipe-to-bin install pattern. If/when
+# wanted, add via a pinned-version + sha256-verified install in a
+# follow-up PR.
+RUN tee /etc/yum.repos.d/kubernetes.repo > /dev/null <<'EOF'
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
+EOF
+RUN dnf install -y kubectl helm && dnf clean all
+
 # npm globals
 RUN npm install -g pnpm@latest @anthropic-ai/claude-code
 
