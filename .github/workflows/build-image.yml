@@ -40,10 +40,14 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Per-Fedora-version tags: bump these on F-N → F-(N+1)
+          # rebases. The sha-prefix tag is what argocd-image-updater
+          # watches (regex pin) — see imageupdater-dev-workstation.yaml
+          # in zerosignage/platform's k8s/argocd-image-updater/.
           tags: |
-            type=raw,value=43
+            type=raw,value=44
             type=raw,value=latest
-            type=sha,prefix=43-
+            type=sha,prefix=44-
 
       - name: Build and push
         uses: docker/build-push-action@v6

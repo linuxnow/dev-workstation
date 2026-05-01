@@ -1,9 +1,9 @@
-FROM registry.fedoraproject.org/fedora-toolbox:43
+FROM registry.fedoraproject.org/fedora-toolbox:44
 
 LABEL org.opencontainers.image.source="https://github.com/linuxnow/dev-workstation"
-LABEL org.opencontainers.image.description="Fedora 43 dev workstation (toolbox base) with systemd + sshd + dev tooling"
+LABEL org.opencontainers.image.description="Fedora 44 dev workstation (toolbox base) with systemd + sshd + dev tooling"
 
-# fedora-toolbox:43 already provides:
+# fedora-toolbox:44 already provides:
 #   - full docs (macros.image-language-conf removed, tsflags=nodocs stripped)
 #   - coreutils-full, glibc-all-langpacks
 #   - bash-completion, bc, bzip2, diffutils, findutils, flatpak-spawn,
@@ -27,12 +27,18 @@ RUN dnf install -y systemd openssh-server && \
 
 # RPM Fusion repos (free + nonfree)
 RUN dnf install -y \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-43.noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-43.noarch.rpm
+    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-44.noarch.rpm \
+    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-44.noarch.rpm
 
-# Xibo Players repo
-RUN dnf install -y \
-    https://dl.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-7.fc43.noarch.rpm
+# Xibo Players repo — TODO: re-enable when fc44 build is available.
+# As of 2026-05-01, dl.xiboplayer.org/rpm/fedora/44/ returns 404. The
+# repo is informational only inside dev-workstation (we don't install
+# any xiboplayer-* RPMs here — the player itself runs on physical
+# kiosk hardware). Adding the repo lets `dnf search xiboplayer-*`
+# work from inside the pod, but isn't load-bearing for any other
+# step in this Containerfile.
+# RUN dnf install -y \
+#     https://dl.xiboplayer.org/rpm/fedora/44/noarch/xiboplayer-release-44-1.fc44.noarch.rpm
 
 # Extra interactive shell tools not in toolbox base
 RUN dnf install -y \
