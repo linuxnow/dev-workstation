@@ -116,11 +116,13 @@ RUN dnf install -y \
 # repo (signed releases, GPG-checked at install time via gpgcheck=1
 # + the published gpgkey URL).
 #
-# k9s (interactive cluster TUI) is intentionally NOT installed: it's
-# only available as an upstream tarball on github.com/derailed/k9s
-# releases, which is a curl-pipe-to-bin install pattern. If/when
-# wanted, add via a pinned-version + sha256-verified install in a
-# follow-up PR.
+# k9s (interactive cluster TUI) — pinned version + sha256 verified
+# (vs. an unpinned `curl|tar -xz` to /usr/local/bin which would fetch
+# `latest` with no integrity check). To bump:
+#   1. https://github.com/derailed/k9s/releases — note the new tag
+#   2. Download checksums.sha256 from the release; record the
+#      k9s_Linux_amd64.tar.gz hash
+#   3. Update K9S_VERSION + K9S_SHA256 ARGs below in lockstep
 RUN tee /etc/yum.repos.d/kubernetes.repo > /dev/null <<'EOF'
 [kubernetes]
 name=Kubernetes
@@ -130,6 +132,13 @@ gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
 EOF
 RUN dnf install -y kubectl helm && dnf clean all
+ARG K9S_VERSION=v0.50.18
+ARG K9S_SHA256=0b697ed4aa80997f7de4deeed6f1fba73df191b28bf691b1f28d2f45fa2a9e9b
+RUN curl -sSLo /tmp/k9s.tar.gz \
+        "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz" && \
+    echo "${K9S_SHA256}  /tmp/k9s.tar.gz" | sha256sum -c - && \
+    tar -xzf /tmp/k9s.tar.gz -C /usr/local/bin k9s && \
+    rm /tmp/k9s.tar.gz
 
 # npm globals
 RUN npm install -g pnpm@latest @anthropic-ai/claude-code
