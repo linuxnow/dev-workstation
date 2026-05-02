@@ -52,6 +52,30 @@ RUN dnf install -y \
     gcc gcc-c++ make cmake \
     && dnf clean all
 
+# Rust toolchain + arexibo (xibo-players/arexibo) build deps
+#
+# arexibo is a Rust/Qt6 Pi5 signage player that the overnight-audit
+# 2026-04-21 CI gap revealed was never being built/tested in CI.
+# Baked in here so dev-workstation can `cargo build / test / clippy`
+# the fork branches without per-run dnf-install friction.
+#
+# Fedora package names mapped from arexibo's deb.yml extra-build-deps:
+#   cargo              → rust + cargo
+#   cmake              → already installed above
+#   g++                → gcc-c++ (already)
+#   libdbus-1-dev      → dbus-devel
+#   libzmq3-dev        → zeromq-devel
+#   qt6-webengine-dev  → qt6-qtwebengine-devel (+ pulls qt6-qtbase-devel)
+#   libudev-dev        → systemd-devel (libudev is part of systemd)
+#   pkg-config         → pkgconf-pkg-config
+RUN dnf install -y \
+    rust cargo clippy rustfmt \
+    dbus-devel zeromq-devel \
+    qt6-qtwebengine-devel \
+    systemd-devel \
+    pkgconf-pkg-config \
+    && dnf clean all
+
 # Backup, test, and DB tooling
 #
 # - restic:     R2-backed backups of Podman volumes + Claude memory
