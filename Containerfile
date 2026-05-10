@@ -95,8 +95,13 @@ RUN dnf install -y \
 # - awscli2:    R2 operations required by cleanup-artifacts.yml
 # - pass:       Unix password store; ansible playbooks use
 #               `lookup('pipe', 'pass show …')` for non-vault secrets
+# - age:        paired with sops below — needed for `age-keygen -y` to
+#               derive public recipients at playbook runtime (e.g.
+#               install-velero-r2.yml's "Extract cluster age public
+#               recipient" task). sops bundles age cipher support but
+#               not the age CLI tools.
 RUN dnf install -y \
-    restic bats ShellCheck sqlite qpdf awscli2 pass \
+    restic bats ShellCheck sqlite qpdf awscli2 pass age \
     && dnf clean all
 
 # sops — not in Fedora repos; install upstream RPM. Decrypts
