@@ -160,7 +160,7 @@ enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
 EOF
-RUN dnf install -y kubectl helm && dnf clean all
+RUN dnf install -y kubectl helm opentofu && dnf clean all
 ARG K9S_VERSION=v0.50.18
 ARG K9S_SHA256=0b697ed4aa80997f7de4deeed6f1fba73df191b28bf691b1f28d2f45fa2a9e9b
 RUN curl -sSLo /tmp/k9s.tar.gz \
