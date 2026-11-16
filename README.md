@@ -1,6 +1,6 @@
 # dev-workstation
 
-Fedora 43 dev workstation container image with systemd as PID 1.
+Fedora 45 dev workstation container image with systemd as PID 1.
 
 ## What's included
 
@@ -15,7 +15,7 @@ Fedora 43 dev workstation container image with systemd as PID 1.
 ## Usage
 
 ```bash
-podman pull ghcr.io/linuxnow/dev-workstation:43
+podman pull ghcr.io/linuxnow/dev-workstation:45
 ```
 
 Deploy as a rootless Quadlet:

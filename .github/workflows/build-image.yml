@@ -45,9 +45,9 @@ jobs:
           # watches (regex pin) — see imageupdater-dev-workstation.yaml
           # in zerosignage/platform's k8s/argocd-image-updater/.
           tags: |
-            type=raw,value=44
+            type=raw,value=45
             type=raw,value=latest
-            type=sha,prefix=44-
+            type=sha,prefix=45-
 
       - name: Build and push
         uses: docker/build-push-action@v6
